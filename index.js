@@ -113,58 +113,48 @@ const products = [
 showProducts(products)
 
 const selectSeller = document.querySelector('#sellers')
+const selectStyle = document.querySelector('#style')
+const priceInput = document.querySelector('#price')
+const filterButton = document.querySelector('#filterButton')
+const buttonCleanFilters = document.querySelector('#cleanFilter')
 
-selectSeller.addEventListener('change', function () {
-  const sellerSelected = this.value
-  if (sellerSelected === 'all') {
-    showProducts(products)
-  } else {
-    const filterProducts = products.filter(
+filterButton.addEventListener('click', applyFilters)
+buttonCleanFilters.addEventListener('click', clearFilters)
+
+function applyFilters() {
+  const sellerSelected = selectSeller.value
+  const styleSelected = selectStyle.value
+  const priceSelected = parseFloat(priceInput.value)
+
+  let filteredProducts = products
+
+  if (sellerSelected !== 'all') {
+    filteredProducts = filteredProducts.filter(
       (product) => product.seller === sellerSelected
     )
-    showProducts(filterProducts)
   }
-})
 
-const selectStyle = document.querySelector('#style')
-
-selectStyle.addEventListener('change', function () {
-  const styleSelected = this.value
-  if (styleSelected === 'all') {
-    showProducts(products)
-  } else {
-    const filterStyleProducts = products.filter(
+  if (styleSelected !== 'all') {
+    filteredProducts = filteredProducts.filter(
       (product) => product.style === styleSelected
     )
-    showProducts(filterStyleProducts)
-  }
-})
-
-const filterButton = document.querySelector('#filterButton')
-
-filterButton.addEventListener('click', function () {
-  const value = parseFloat(document.querySelector('#price').value)
-
-  if (isNaN(value)) {
-    showProducts(products)
-    return
   }
 
-  const filterPriceProducts = products.filter(
-    (product) => product.price < value
-  )
-  showProducts(filterPriceProducts)
-})
+  if (!isNaN(priceSelected)) {
+    filteredProducts = filteredProducts.filter(
+      (product) => product.price < priceSelected
+    )
+  }
 
-const buttonCleanFilters = document.querySelector('#cleanFilter')
-buttonCleanFilters.textContent = 'Limpiar Filtros'
+  showProducts(filteredProducts)
+}
 
-buttonCleanFilters.addEventListener('click', function () {
+function clearFilters() {
   showProducts(products)
-  selectStyle.selectedIndex = 0
   selectSeller.selectedIndex = 0
-  document.querySelector('#price').value = ''
-})
+  selectStyle.selectedIndex = 0
+  priceInput.value = ''
+}
 
 const menuToggle = document.querySelector('.menu-toggle')
 const menu = document.querySelector('.menu')
